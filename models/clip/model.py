@@ -249,11 +249,18 @@ class VisionTransformer(nn.Module):
             x = x @ self.proj
         out['after_projection'] = x 
 
+        """
+        将ViT每一层Encoder的[cls]feature都输出
+        
+        形式e.g.
+        out['layer0'] = ...
+        out['layer1'] = ...
+        """
         # Return both intermediate features and final clip feature 
-        # return out
+        return out
         
         # This only returns CLIP features 
-        return x 
+        # return x 
 
 
 class CLIP(nn.Module):
@@ -372,9 +379,14 @@ class CLIP(nn.Module):
         return x
 
     def forward(self, image, text):
-        image_features = self.encode_image(image)
+        image_features = self.encode_image(image)        # 经过修改，self.encode_image(image)输出的是每一层Encoder的[cls]feature
         text_features = self.encode_text(text)
 
+        # 对倒数3层的[cls]feature做平均
+        image_features = (image_features['layer'+str(self.vision_layers-1)]+image_features['layer'+str(self.vision_layers-2)]+image_features['layer'+str(self.vision_layers-3)])/3
+        # 对倒数3层的[cls]feature做加权平均
+        image_features = 0.5*image_features['layer'+str(self.vision_layers-1)] + 0.3*image_features['layer'+str(self.vision_layers-2)] + 0.2*image_features['layer'+str(self.vision_layers-3)]
+        
         # normalized features
         image_features = image_features / image_features.norm(dim=1, keepdim=True)
         text_features = text_features / text_features.norm(dim=1, keepdim=True)
