@@ -385,7 +385,7 @@ class CLIP(nn.Module):
         # 对倒数3层的[cls]feature做平均
         image_features = (image_features['layer'+str(self.vision_layers-1)]+image_features['layer'+str(self.vision_layers-2)]+image_features['layer'+str(self.vision_layers-3)])/3
         # 对倒数3层的[cls]feature做加权平均
-        image_features = 0.5*image_features['layer'+str(self.vision_layers-1)] + 0.3*image_features['layer'+str(self.vision_layers-2)] + 0.2*image_features['layer'+str(self.vision_layers-3)]
+        # image_features = 0.5*image_features['layer'+str(self.vision_layers-1)] + 0.3*image_features['layer'+str(self.vision_layers-2)] + 0.2*image_features['layer'+str(self.vision_layers-3)]
         
         # normalized features
         image_features = image_features / image_features.norm(dim=1, keepdim=True)
