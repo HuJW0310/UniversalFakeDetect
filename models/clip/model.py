@@ -250,6 +250,16 @@ class VisionTransformer(nn.Module):
         out['after_projection'] = x 
 
         """
+        将ViT-Large中第20,22,24层的[cls]feature做加权平均, 经过projection后输出
+        """
+        out['res_output'] = torch.zeros_like(out['before_projection'])
+        for layer_output in [[0.2, out['layer19']], [0.3, out['layer21']], [0.5, out['layer23']]]:
+            # layer_output[1] = layer_output[1].permute(1, 0, 2)  # LND -> NLD
+            layer_output[1] = self.ln_post(layer_output[1])
+            out['res_output'] += layer_output[0]*layer_output[1]
+        out['res_output'] = out['res_output'] @ self.proj
+
+        """
         将ViT每一层Encoder的[cls]feature都输出
         
         形式e.g.
