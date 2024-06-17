@@ -18,7 +18,18 @@ class CLIPModel(nn.Module):
 
     def forward(self, x, return_feature=False):
         features = self.model.encode_image(x) 
+        # print(features.keys())
+        """
+        使用的是ViT-Large, 共24层
+        选择第24、22、20层的[cls]feature做加权平均
+        """
         if return_feature:
-            return features
+            return features['after_projection']
+        # print(features['after_projection'].shape)
+        # print(features['layer21'].shape)
+        # print(features['layer19'].shape)
+        # features = 0.5*features['after_projection'] + 0.3*features['layer21'] + 0.2*features['layer19']
+        # print(features.shape)
+        features = features['res_output']
         return self.fc(features)
 
