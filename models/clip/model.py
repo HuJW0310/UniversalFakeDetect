@@ -229,9 +229,20 @@ class VisionTransformer(nn.Module):
 
 
     def forward(self, x: torch.Tensor):
+        """
+        原代码这里的x是4个dimension，即batchsize*RGBchannels*224*224
+        若只输入一张图片，因为没有batchsize维度，需要在最前面加一个维度，见下面第一行代码
+        """
+        x = x.reshape(-1,x.shape[-3],x.shape[-2],x.shape[-1])
+        # print(x.shape)
         x = self.conv1(x)  # shape = [*, width, grid, grid]
+        # print(x.shape)
         x = x.reshape(x.shape[0], x.shape[1], -1)  # shape = [*, width, grid ** 2]
+        # print(x.shape)
         x = x.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
+        # print(self.class_embedding.to(x.dtype).shape)
+        # print(torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype, device=x.device).shape)
+        # print(x.shape)
         x = torch.cat([self.class_embedding.to(x.dtype) + torch.zeros(x.shape[0], 1, x.shape[-1], dtype=x.dtype, device=x.device), x], dim=1)  # shape = [*, grid ** 2 + 1, width]
         x = x + self.positional_embedding.to(x.dtype)
         x = self.ln_pre(x)
@@ -250,10 +261,12 @@ class VisionTransformer(nn.Module):
         out['after_projection'] = x 
 
         """
-        将ViT-Large中第20,22,24层的[cls]feature做加权平均, 经过projection后输出
+        将ViT-Large中第20,22,24层(或16,20,24)的[cls]feature做加权平均, 经过projection后输出
         """
         out['res_output'] = torch.zeros_like(out['before_projection'])
+        # for layer_output in [[0.2, out['layer15']], [0.3, out['layer19']], [0.5, out['layer23']]]:
         for layer_output in [[0.2, out['layer19']], [0.3, out['layer21']], [0.5, out['layer23']]]:
+        # for layer_output in [[0.5, out['layer15']], [0.5, out['layer21']]]:
             # layer_output[1] = layer_output[1].permute(1, 0, 2)  # LND -> NLD
             layer_output[1] = self.ln_post(layer_output[1])
             out['res_output'] += layer_output[0]*layer_output[1]
