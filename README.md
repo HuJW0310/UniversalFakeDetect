@@ -1,6 +1,6 @@
 # Detecting fake images
 
-This repo is modified upon: **Towards Universal Fake Image Detectors that Generalize Across Generative Models**[[Project Page](https://utkarshojha.github.io/universal-fake-detection/)] [[Paper](https://arxiv.org/abs/2302.10174)]
+This repo is <u>modified<u> upon: **Towards Universal Fake Image Detectors that Generalize Across Generative Models**[[Project Page](https://utkarshojha.github.io/universal-fake-detection/)] [[Paper](https://arxiv.org/abs/2302.10174)]
 
 <p align="center">
     <a href="https://utkarshojha.github.io/universal-fake-detection/"><img src="resources/teaser.png" width="80%">></a> <br>
