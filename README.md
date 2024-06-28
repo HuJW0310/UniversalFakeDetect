@@ -7,6 +7,10 @@ This repo is <u>modified<u> upon: **Towards Universal Fake Image Detectors that 
     Using images from one type of generative model (e.g., GAN), detect fake images from other <i>breeds</i> (e.g., Diffusion models)
 </p>
 
+## Demo
+
+- We have built a demo of our model on [HuggingFace Spaces](https://huggingface.co/spaces/David310/Detect_AI-generated_Image).
+- If you find this demo paused, please contact me at 1912608791@qq.com or hujinwei0310@gmail.com to restart it.
 
 ## Contents
 
